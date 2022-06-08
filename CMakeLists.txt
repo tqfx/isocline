@@ -14,7 +14,7 @@ option(IC_DEBUG_MSG         "Enable printing debug messages stderr (only if also
 option(IC_SEPARATE_OBJS     "Compile with separate object files instead of one (warning: exports internal symbols)" OFF)
 
 set(ic_version "0.1")
-set(ic_sources          src/isocline.c)    
+set(ic_sources          src/isocline.c)
 set(ic_example_sources  test/example.c test/test_colors.c)
 
 # -----------------------------------------------------------------------------
@@ -26,7 +26,7 @@ set(ic_install_dir)
 
 if(IC_SEPARATE_OBJS)
   list(APPEND ic_cdefs IC_SEPARATE_OBJS)
-  list(APPEND ic_sources  
+  list(APPEND ic_sources
               src/attr.c
               src/bbcode.c
               src/common.c
@@ -47,13 +47,13 @@ if(IC_USE_CXX)
   set_source_files_properties(${ic_sources}         PROPERTIES LANGUAGE CXX )
   set_source_files_properties(${ic_example_sources} PROPERTIES LANGUAGE CXX )
 else()
-  set(IC_COMPILER_ID "${CMAKE_C_COMPILER_ID}")  
+  set(IC_COMPILER_ID "${CMAKE_C_COMPILER_ID}")
 endif()
 
 if(NOT IC_DEBUG_MSG)
   message(STATUS "Disable debug messages")
   list(APPEND ic_cdefs IC_NO_DEBUG_MSG)
-endif()  
+endif()
 
 
 # -----------------------------------------------------------------------------
@@ -84,12 +84,12 @@ if(IC_DEBUG_UBSAN OR IC_DEBUG_ASAN)
     endif()
     if (IC_DEBUG_ASAN)
       list(APPEND ic_san "address")
-      message(STATUS "Using the address sanitizer. To detect memory leaks run as:") 
+      message(STATUS "Using the address sanitizer. To detect memory leaks run as:")
       message(STATUS "> ASAN_OPTIONS=\"detect_leaks=1:verbosity=1\" ./example")
     endif()
     list(JOIN ic_san "," ic_san)
     list(APPEND ic_cflags -fsanitize=${ic_san})
-    list(APPEND CMAKE_EXE_LINKER_FLAGS -fsanitize=${ic_san})    
+    list(APPEND CMAKE_EXE_LINKER_FLAGS -fsanitize=${ic_san})
   else()
     message(WARNING "Can only use sanitizer with a clang debug build (currently: ${IC_COMPILER_ID}, CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}, IC_USE_C=${IC_USE_C})")
   endif()

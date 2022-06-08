@@ -1,7 +1,7 @@
-# Build as: 
+# Build as:
 #   $ stack update
 #   $ stack build
-#   $ stack run example 
+#   $ stack run example
 
 resolver: lts-18.21
 # resolver: lts-14.27           # ghc 8.6.5
