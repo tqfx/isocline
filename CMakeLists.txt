@@ -12,6 +12,7 @@ option(IC_DEBUG_UBSAN       "Build with undefined behaviour sanitizer" OFF)
 option(IC_DEBUG_ASAN        "Build with address sanitizer" OFF)
 option(IC_DEBUG_MSG         "Enable printing debug messages stderr (only if also ISOCLINE_DEBUG=1 is set in the environment)" ON)
 option(IC_SEPARATE_OBJS     "Compile with separate object files instead of one (warning: exports internal symbols)" OFF)
+option(IC_BUILD_TESTS       "Build test binaries (example & test_colors)" ON)
 
 set(ic_version "0.1")
 set(ic_sources          src/isocline.c)
@@ -55,7 +56,6 @@ if(NOT IC_DEBUG_MSG)
   list(APPEND ic_cdefs IC_NO_DEBUG_MSG)
 endif()
 
-
 # -----------------------------------------------------------------------------
 # Convenience: set default build type depending on the build directory
 # -----------------------------------------------------------------------------
@@ -69,7 +69,6 @@ if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release")
   endif()
 endif()
-
 
 # -----------------------------------------------------------------------------
 # Sanitizers
@@ -94,7 +93,6 @@ if(IC_DEBUG_UBSAN OR IC_DEBUG_ASAN)
     message(WARNING "Can only use sanitizer with a clang debug build (currently: ${IC_COMPILER_ID}, CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}, IC_USE_C=${IC_USE_C})")
   endif()
 endif()
-
 
 # -----------------------------------------------------------------------------
 # Flags
@@ -123,8 +121,6 @@ if (IC_USE_CXX)
   endif()
 endif()
 
-
-
 # -----------------------------------------------------------------------------
 # Overview
 # -----------------------------------------------------------------------------
@@ -134,9 +130,8 @@ message(STATUS "Library   : libisocline")
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 message(STATUS "Compiler  : ${IC_COMPILER_ID}")
 message(STATUS "Defines   : ${ic_cdefs}")
-# message(STATUS "Flags     : ${ic_cflags}")
+message(STATUS "Flags     : ${ic_cflags}")
 message(STATUS "")
-
 
 # -----------------------------------------------------------------------------
 # Static library (libisocline.a) and samples (example)
@@ -151,12 +146,14 @@ target_include_directories(isocline PUBLIC
     $<INSTALL_INTERFACE:${ic_install_dir}/include>
 )
 
-add_executable(example test/example.c)
-target_compile_options(example PRIVATE ${ic_cflags})
-target_include_directories(example PRIVATE include)
-target_link_libraries(example PRIVATE isocline)
+if(IC_BUILD_TESTS)
+  add_executable(example test/example.c)
+  target_compile_options(example PRIVATE ${ic_cflags})
+  target_include_directories(example PRIVATE include)
+  target_link_libraries(example PRIVATE isocline)
 
-add_executable(test_colors test/test_colors.c)
-target_compile_options(test_colors PRIVATE ${ic_cflags})
-target_include_directories(test_colors PRIVATE include)
-target_link_libraries(test_colors PRIVATE isocline)
+  add_executable(test_colors test/test_colors.c)
+  target_compile_options(test_colors PRIVATE ${ic_cflags})
+  target_include_directories(test_colors PRIVATE include)
+  target_link_libraries(test_colors PRIVATE isocline)
+endif()
